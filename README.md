@@ -1,6 +1,8 @@
 # Power BI Calendar
 
-Basic copy paste into a Power BI Power Query Editor for ease of use. 
+Basic copy paste into a Power BI Power Query Editor for ease of use. You need to use three tables (so far). One calendar table, two sort (by year by month) which will help your charts month year sort.
+
+Go into Power BI Desktop and open Transform data. Create new tables with the three queries below. Sort columns by numeric values and connect relationship date values to calendar. Calendar date column should have a relationship with raw data. 
 
 Date are from DateTime.LocalNow() to Date.AddYears(Date.From(DateTime.LocalNow()), -2). (3 years)
 
@@ -9,6 +11,10 @@ Date are from DateTime.LocalNow() to Date.AddYears(Date.From(DateTime.LocalNow()
 - [x] Added fiscal year quarter
 - [x] Added fiscal year quarter sort
 - [x] Added fiscal year to years (i.e. 2020-2021)
+- [x] Added month sort
+
+## Power Query M
+1. calendar source
 
 ```
 let
@@ -41,10 +47,49 @@ let
     #"Added Custom9" = Table.AddColumn(#"Added Custom8", "Fiscal Quarter", each Quarters{Date.Month([Date])-1}),
     #"Added Custom10" = Table.AddColumn(#"Added Custom9", "Fiscal Period", each Period{Date.Month([Date])-1}),
     #"Added Custom11" = Table.AddColumn(#"Added Custom10", "Fiscal Year Quarter ", each Number.ToText([Fiscal Year]) & " Q" & Number.ToText([Fiscal Quarter])),
-    #"Added Custom12" = Table.AddColumn(#"Added Custom11", "Fiscal Year Quarter Sort", each Number.FromText(Number.ToText([Fiscal Year]) & "0" & Number.ToText([Fiscal Quarter]))),
-    #"Sorted Rows" = Table.Sort(#"Added Custom12",{{"Fiscal Year Quarter Sort", Order.Ascending}}),
-    #"Added Conditional Column" = Table.AddColumn(#"Sorted Rows", "Month Sort", each if [Month Number] = 1 then 7 else if [Month Number] = 2 then 8 else if [Month Number] = 3 then 9 else if [Month Number] = 4 then 10 else if [Month Number] = 5 then 11 else if [Month Number] = 6 then 12 else if [Month Number] = 7 then 1 else if [Month Number] = 8 then 2 else if [Month Number] = 9 then 3 else if [Month Number] = 10 then 4 else if [Month Number] = 11 then 5 else if [Month Number] = 12 then 6 else 0),
-    #"Added Custom13" = Table.AddColumn(#"Added Conditional Column", "Fiscal Year To Years", each Number.ToText([Fiscal Year]-1) & "-" & Number.ToText([Fiscal Year]))
+    #"Added Custom12" = Table.AddColumn(#"Added Custom11", "Fiscal Year To Years", each Number.ToText([Fiscal Year]-1) & "-" & Number.ToText([Fiscal Year]))
 in
-    #"Added Custom13"
+    #"Added Custom12"
+```
+2. yearSort
+```
+let
+  Quarters = {3,3,3,4,4,4,1,1,1,2,2,2},
+  Period = {7,8,9,10,11,12,1,2,3,4,5,6},
+  Source = List.Generate( () => Number.From(Date.Year(DateTime.LocalNow())), each _ >= Number.From(Date.Year(Date.AddYears(Date.From(DateTime.LocalNow()), -2))), each _ - 1 ),
+  #"Table from List" = Table.FromList(Source, Splitter.SplitByNothing(), null, null, ExtraValues.Error),
+  #"Added Index" = Table.AddIndexColumn(#"Table from List", "Index", 1, 1),
+  #"Renamed Columns" = Table.RenameColumns(#"Added Index",{{"Column1", "Year"}}),
+    #"Added Custom" = Table.AddColumn(#"Renamed Columns", "Fiscal Year To Years", each Number.ToText([Year]) & "-" & Number.ToText([Year]+1))
+ in
+   #"Added Custom"
+```
+3. monthSort
+```
+let
+    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i45WMlTSUfIqzalUitWJVjICchxL00uLS8BcYyA3OLWgJDU3KbUILGICFPFPLsmH8U2BfL/8MoQCM6CAS2oyQsAcZH5iXmliEcQKCyDfLTWpCC5gCRTwTSxKzgDzDA1ATigoysyBcA3BshCVhkZgt+alKsXGAgA=", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Index = _t, Month = _t]),
+    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Index", Int64.Type}, {"Month", type text}})
+in
+    #"Changed Type"
+```
+4. fiscalYearQuarterSort
+```
+let
+    Quarters = {3,3,3,4,4,4,1,1,1,2,2,2},
+    Source = List.Dates,
+    #"Invoked FunctionSource" = Source(Date.AddYears(Date.From(DateTime.LocalNow()), -2), Duration.Days(DateTime.Date(DateTime.FixedLocalNow()) - Date.AddYears(Date.From(DateTime.LocalNow()), -2)), #duration(1, 0, 0, 0)),
+    #"Table from List1" = Table.FromList(#"Invoked FunctionSource", Splitter.SplitByNothing(), null, null, ExtraValues.Error),
+    #"Renamed Columns1" = Table.RenameColumns(#"Table from List1",{{"Column1", "Date"}}),
+    #"Added Conditional Column" = Table.AddColumn(#"Renamed Columns1", "End of Quarter", each Date.EndOfQuarter([Date])),
+    #"End of Quarter" = #"Added Conditional Column"[End of Quarter],
+    #"Remove Nulls" = List.RemoveNulls(#"End of Quarter"),
+    #"Table from List2" = Table.FromList(#"Remove Nulls", Splitter.SplitByNothing(), null, null, ExtraValues.Error),
+    #"Renamed Columns2" = Table.RenameColumns(#"Table from List2",{{"Column1", "End of Quarter"}}),
+    #"Added Custom1" = Table.AddColumn(#"Renamed Columns2", "Fiscal Year", each if Date.Month([End of Quarter])>6 then Date.Year([End of Quarter])+1 else Date.Year([End of Quarter])),
+    #"Added Custom2" = Table.AddColumn(#"Added Custom1", "Fiscal Quarter", each Quarters{Date.Month([End of Quarter])-1}),
+    #"Added Custom3" = Table.AddColumn(#"Added Custom2", "Fiscal Year Quarter ", each Number.ToText([Fiscal Year]) & " Q" & Number.ToText([Fiscal Quarter])),
+    #"Added Custom4" = Table.AddColumn(#"Added Custom3", "Fiscal Year Quarter Sort", each Number.FromText(Number.ToText([Fiscal Year]) & "0" & Number.ToText([Fiscal Quarter]))),
+    #"Removed Duplicates" = Table.Distinct(#"Added Custom4", {"End of Quarter"})
+in
+    #"Removed Duplicates"
 ```
