@@ -8,6 +8,7 @@ Date are from DateTime.LocalNow() to Date.AddYears(Date.From(DateTime.LocalNow()
 - [x] Added fiscal year month sort
 - [x] Added fiscal year quarter
 - [x] Added fiscal year quarter sort
+- [x] Added fiscal year to years (i.e. 2020-2021)
 
 ```
 let
@@ -42,8 +43,8 @@ let
     #"Added Custom11" = Table.AddColumn(#"Added Custom10", "Fiscal Year Quarter ", each Number.ToText([Fiscal Year]) & " Q" & Number.ToText([Fiscal Quarter])),
     #"Added Custom12" = Table.AddColumn(#"Added Custom11", "Fiscal Year Quarter Sort", each Number.FromText(Number.ToText([Fiscal Year]) & "0" & Number.ToText([Fiscal Quarter]))),
     #"Sorted Rows" = Table.Sort(#"Added Custom12",{{"Fiscal Year Quarter Sort", Order.Ascending}}),
-    #"Added Conditional Column" = Table.AddColumn(#"Sorted Rows", "Month Sort", each if [Month Number] = 1 then 7 else if [Month Number] = 2 then 8 else if [Month Number] = 3 then 9 else if [Month Number] = 4 then 10 else if [Month Number] = 5 then 11 else if [Month Number] = 6 then 12 else if [Month Number] = 7 then 1 else if [Month Number] = 8 then 2 else if [Month Number] = 9 then 3 else if [Month Number] = 10 then 4 else if [Month Number] = 11 then 5 else if [Month Number] = 12 then 6 else 0)
+    #"Added Conditional Column" = Table.AddColumn(#"Sorted Rows", "Month Sort", each if [Month Number] = 1 then 7 else if [Month Number] = 2 then 8 else if [Month Number] = 3 then 9 else if [Month Number] = 4 then 10 else if [Month Number] = 5 then 11 else if [Month Number] = 6 then 12 else if [Month Number] = 7 then 1 else if [Month Number] = 8 then 2 else if [Month Number] = 9 then 3 else if [Month Number] = 10 then 4 else if [Month Number] = 11 then 5 else if [Month Number] = 12 then 6 else 0),
+    #"Added Custom13" = Table.AddColumn(#"Added Conditional Column", "Fiscal Year To Years", each Number.ToText([Fiscal Year]-1) & "-" & Number.ToText([Fiscal Year]))
 in
-    #"Added Conditional Column"
-    
+    #"Added Custom13"
 ```
