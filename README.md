@@ -1,5 +1,12 @@
-# powerbi-calendar
-'''
+# Power BI Calendar
+
+Basic copy paste into a Power BI Power Query Editor for ease of use. 
+
+Date are from DateTime.LocalNow() to Date.AddYears(Date.From(DateTime.LocalNow()), -2). (3 years)
+
+- [x] Added fiscal year map for Jun-July
+
+```
 let
     Quarters = {3,3,3,4,4,4,1,1,1,2,2,2},
     Period = {7,8,9,10,11,12,1,2,3,4,5,6},
@@ -31,4 +38,4 @@ let
 in
     #"Added Custom9"
     
- '''
+```
