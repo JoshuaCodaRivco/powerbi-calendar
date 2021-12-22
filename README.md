@@ -89,7 +89,8 @@ let
     #"Added Custom2" = Table.AddColumn(#"Added Custom1", "Fiscal Quarter", each Quarters{Date.Month([End of Quarter])-1}),
     #"Added Custom3" = Table.AddColumn(#"Added Custom2", "Fiscal Year Quarter ", each Number.ToText([Fiscal Year]) & " Q" & Number.ToText([Fiscal Quarter])),
     #"Added Custom4" = Table.AddColumn(#"Added Custom3", "Fiscal Year Quarter Sort", each Number.FromText(Number.ToText([Fiscal Year]) & "0" & Number.ToText([Fiscal Quarter]))),
-    #"Removed Duplicates" = Table.Distinct(#"Added Custom4", {"End of Quarter"})
+    #"Removed Duplicates" = Table.Distinct(#"Added Custom4", {"End of Quarter"}),
+    #"Added Index" = Table.AddIndexColumn(#"Removed Duplicates", "Index", 1, 1)
 in
-    #"Removed Duplicates"
+    #"Added Index"
 ```
