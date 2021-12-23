@@ -1,5 +1,4 @@
 # Power BI Calendar
-
 Basic copy paste into a Power BI Power Query Editor for ease of use. You need to use 4 tables (so far). One calendar table, two sort (by year by month) which will help your charts month year sort.
 
 Go into Power BI Desktop and open Transform data. Create new tables with the 4 queries below. Sort columns by numeric values and connect relationship date values to calendar. Calendar date column should have a relationship with raw data. 
@@ -13,7 +12,16 @@ Date are from DateTime.LocalNow() to Date.AddYears(Date.From(DateTime.LocalNow()
 - [x] Added fiscal year to years (i.e. 2020-2021)
 - [x] Added month sort
 
-## Power Query M
+## Get Started
+* Download the example or start a new Power BI project. 
+* Open Transform data under the Home tab.
+![Relationship](/docs/images/get_started.png)
+* Create a table and close
+* Open Advanced Editor in the Home tab in Power Query
+![Relationship](/docs/images/advanced_editor.png)
+* Copy and paste the 4 tables below
+
+### Power Query
 1. calendar
 
 ```
@@ -94,10 +102,12 @@ let
 in
     #"Added Index"
 ```
-## Data
+### Data
+Go into the Data tab and sort by index for each desired field.
 ![Sort](/docs/images/sort_example.png)
 
-## Model
+### Model
+Connect the relationship to the main calendar table. You will use the sort tables for your charts and connect your date fields to the main calendar table.
 ![Relationship](/docs/images/relationship_example.png)
 
 ## Contact
