@@ -94,5 +94,15 @@ let
 in
     #"Added Index"
 ```
+## Data
+![Sort](/docs/images/sort_example.png)
 
+## Model
 ![Relationship](/docs/images/relationship_example.png)
+
+## Contact
+If you have questions about this project, please contact:
+jcoda@rivco.org
+
+## Contributors
+By Joshua Coda
