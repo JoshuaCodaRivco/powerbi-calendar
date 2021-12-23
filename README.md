@@ -2,7 +2,7 @@
 
 Basic copy paste into a Power BI Power Query Editor for ease of use. You need to use 4 tables (so far). One calendar table, two sort (by year by month) which will help your charts month year sort.
 
-Go into Power BI Desktop and open Transform data. Create new tables with the three queries below. Sort columns by numeric values and connect relationship date values to calendar. Calendar date column should have a relationship with raw data. 
+Go into Power BI Desktop and open Transform data. Create new tables with the 4 queries below. Sort columns by numeric values and connect relationship date values to calendar. Calendar date column should have a relationship with raw data. 
 
 Date are from DateTime.LocalNow() to Date.AddYears(Date.From(DateTime.LocalNow()), -2). (3 years)
 
@@ -14,7 +14,7 @@ Date are from DateTime.LocalNow() to Date.AddYears(Date.From(DateTime.LocalNow()
 - [x] Added month sort
 
 ## Power Query M
-1. calendar source
+1. calendar
 
 ```
 let
