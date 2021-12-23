@@ -94,3 +94,5 @@ let
 in
     #"Added Index"
 ```
+
+![Relationship](/docs/images/relationship_example.png)
