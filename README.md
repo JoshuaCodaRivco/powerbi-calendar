@@ -1,6 +1,6 @@
 # Power BI Calendar
 
-Basic copy paste into a Power BI Power Query Editor for ease of use. You need to use three tables (so far). One calendar table, two sort (by year by month) which will help your charts month year sort.
+Basic copy paste into a Power BI Power Query Editor for ease of use. You need to use 4 tables (so far). One calendar table, two sort (by year by month) which will help your charts month year sort.
 
 Go into Power BI Desktop and open Transform data. Create new tables with the three queries below. Sort columns by numeric values and connect relationship date values to calendar. Calendar date column should have a relationship with raw data. 
 
@@ -21,7 +21,7 @@ let
     Quarters = {3,3,3,4,4,4,1,1,1,2,2,2},
     Period = {7,8,9,10,11,12,1,2,3,4,5,6},
     Source = List.Dates,
-    #"Invoked FunctionSource" = Source(Date.AddYears(Date.From(DateTime.LocalNow()), -2), Duration.Days(DateTime.Date(DateTime.FixedLocalNow()) - Date.AddYears(Date.From(DateTime.LocalNow()), -2)), #duration(1, 0, 0, 0)),
+    #"Invoked FunctionSource" = Source(#date(Date.Year(Date.AddYears(Date.From(DateTime.LocalNow()), -2)),1,1), Duration.Days(DateTime.Date(DateTime.FixedLocalNow()) - #date(Date.Year(Date.AddYears(Date.From(DateTime.LocalNow()), -2)),1,1)), #duration(1, 0, 0, 0)),
     #"Table from List" = Table.FromList(#"Invoked FunctionSource", Splitter.SplitByNothing(), null, null, ExtraValues.Error),
     #"Added Index" = Table.AddIndexColumn(#"Table from List", "Index", 1, 1),
     #"Renamed Columns" = Table.RenameColumns(#"Added Index",{{"Column1", "Date"}}),
@@ -77,7 +77,7 @@ in
 let
     Quarters = {3,3,3,4,4,4,1,1,1,2,2,2},
     Source = List.Dates,
-    #"Invoked FunctionSource" = Source(Date.AddYears(Date.From(DateTime.LocalNow()), -2), Duration.Days(DateTime.Date(DateTime.FixedLocalNow()) - Date.AddYears(Date.From(DateTime.LocalNow()), -2)), #duration(1, 0, 0, 0)),
+    #"Invoked FunctionSource" = Source(#date(Date.Year(Date.AddYears(Date.From(DateTime.LocalNow()), -2)),1,1), Duration.Days(DateTime.Date(DateTime.FixedLocalNow()) - #date(Date.Year(Date.AddYears(Date.From(DateTime.LocalNow()), -2)),1,1)), #duration(1, 0, 0, 0)),
     #"Table from List1" = Table.FromList(#"Invoked FunctionSource", Splitter.SplitByNothing(), null, null, ExtraValues.Error),
     #"Renamed Columns1" = Table.RenameColumns(#"Table from List1",{{"Column1", "Date"}}),
     #"Added Conditional Column" = Table.AddColumn(#"Renamed Columns1", "End of Quarter", each Date.EndOfQuarter([Date])),
