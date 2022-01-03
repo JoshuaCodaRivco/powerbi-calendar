@@ -1,7 +1,7 @@
 # Power BI Calendar
-Basic copy paste into a Power BI Power Query Editor for ease of use. You need to use 4 tables (so far). One calendar table, two sort (by year by month) which will help your charts month year sort.
+Basic copy paste into a Power BI Power Query Editor for ease of use. You need to use 3 tables (so far). One calendar table, two sort (by year by month) which will help your charts month year sort.
 
-Go into Power BI Desktop and open Transform data. Create new tables with the 4 queries below. Sort columns by numeric values and connect relationship date values to calendar. Calendar date column should have a relationship with raw data. 
+Go into Power BI Desktop and open Transform data. Create new tables with the 3 queries below. Sort columns by numeric values and connect relationship date values to calendar. Calendar date column should have a relationship with raw data. 
 
 Date are from DateTime.LocalNow() to Date.AddYears(Date.From(DateTime.LocalNow()), -2). (3 years)
 
@@ -29,7 +29,7 @@ let
     Quarters = {3,3,3,4,4,4,1,1,1,2,2,2},
     Period = {7,8,9,10,11,12,1,2,3,4,5,6},
     Source = List.Dates,
-    #"Invoked FunctionSource" = Source(#date(Date.Year(Date.AddYears(Date.From(DateTime.LocalNow()), -2)),1,1), Duration.Days(DateTime.Date(DateTime.FixedLocalNow()) - #date(Date.Year(Date.AddYears(Date.From(DateTime.LocalNow()), -2)),1,1)), #duration(1, 0, 0, 0)),
+    #"Invoked FunctionSource" = Source(#date(Date.Year(Date.AddYears(Date.From(DateTime.LocalNow()), -3)),7,1), Duration.Days(DateTime.Date(DateTime.FixedLocalNow()) - #date(Date.Year(Date.AddYears(Date.From(DateTime.LocalNow()), -3)),7,1)), #duration(1, 0, 0, 0)),
     #"Table from List" = Table.FromList(#"Invoked FunctionSource", Splitter.SplitByNothing(), null, null, ExtraValues.Error),
     #"Added Index" = Table.AddIndexColumn(#"Table from List", "Index", 1, 1),
     #"Renamed Columns" = Table.RenameColumns(#"Added Index",{{"Column1", "Date"}}),
@@ -59,20 +59,9 @@ let
 in
     #"Added Custom12"
 ```
-2. yearSort
-```
-let
-  Quarters = {3,3,3,4,4,4,1,1,1,2,2,2},
-  Period = {7,8,9,10,11,12,1,2,3,4,5,6},
-  Source = List.Generate( () => Number.From(Date.Year(DateTime.LocalNow())), each _ >= Number.From(Date.Year(Date.AddYears(Date.From(DateTime.LocalNow()), -2))), each _ - 1 ),
-  #"Table from List" = Table.FromList(Source, Splitter.SplitByNothing(), null, null, ExtraValues.Error),
-  #"Added Index" = Table.AddIndexColumn(#"Table from List", "Index", 1, 1),
-  #"Renamed Columns" = Table.RenameColumns(#"Added Index",{{"Column1", "Year"}}),
-    #"Added Custom" = Table.AddColumn(#"Renamed Columns", "Fiscal Year To Years", each Number.ToText([Year]) & "-" & Number.ToText([Year]+1))
- in
-   #"Added Custom"
-```
-3. monthSort
+
+2. monthSort
+Description: Month sort is required, because naturally order for fiscal year month order (July-June).
 ```
 let
     Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i45WMlTSUfIqzalUitWJVjICchxL00uLS8BcYyA3OLWgJDU3KbUILGICFPFPLsmH8U2BfL/8MoQCM6CAS2oyQsAcZH5iXmliEcQKCyDfLTWpCC5gCRTwTSxKzgDzDA1ATigoysyBcA3BshCVhkZgt+alKsXGAgA=", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Index = _t, Month = _t]),
@@ -80,7 +69,7 @@ let
 in
     #"Changed Type"
 ```
-4. fiscalYearQuarterSort
+3. fiscalYearQuarterSort
 ```
 let
     Quarters = {3,3,3,4,4,4,1,1,1,2,2,2},
